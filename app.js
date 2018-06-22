@@ -10,15 +10,47 @@ GAME RULES:
 */
 
 var rollDiceBtn = document.querySelector('.btn-roll');
+var holdBtn = document.querySelector('.btn-hold');
 var dicePic = document.querySelector('.dice');
+
+var activePlayer = 0;
+var diceRolleValue;
+var currentScore;
+var currentPlayer;
+
 
 rollDiceBtn.addEventListener('click', function() {
 
-   var num = Math.floor(Math.random() * 6)
-   console.log(num + 1);
+   diceRolleValue = Math.floor(Math.random() * 6)
+   diceRolleValue++;
 
-   dicePic.src = 'dice-' + (num + 1) + '.png';
+   //change the current score of the activePlayer
+   currentPlayer = document.querySelector('#current-' + activePlayer);
+
+   currentScore = parseInt(document.querySelector('#current-' + activePlayer).textContent);
+   currentScore += diceRolleValue;
+
+   currentPlayer.textContent = currentScore;
+
+   //change the dice picture to mimic the rolled dice number
+   dicePic.src = 'dice-' + diceRolleValue + '.png';
 
    //document.querySelector('#current-0').innerHTML = '<h1>' + (num + 1) + '</h1>';
 
 });
+
+holdBtn.addEventListener('click', function() {
+
+    if (activePlayer === 0) {
+        activePlayer = 1;
+    }else {
+        activePlayer = 0;
+    }
+
+
+
+});
+
+
+
+
