@@ -9,47 +9,100 @@ GAME RULES:
 
 */
 
-var rollDiceBtn = document.querySelector('.btn-roll');
-var holdBtn = document.querySelector('.btn-hold');
-var dicePic = document.querySelector('.dice');
-
+var diceImgDOM = document.querySelector('.dice');
+var player1GlobalScore = 0;
+var player2GlobalScore = 0;
 var activePlayer = 0;
-var diceRolleValue;
-var currentScore;
-var currentPlayer;
+var roundScore = 0;
+
+var globalScore1DOM = document.getElementById('score-0');
+var globalScore2DOM = document.getElementById('score-1');
+
+//Initialize the placeholders to 0
+globalScore1DOM.textContent = '0';
+globalScore2DOM.textContent = '0';
+document.getElementById('current-0').textContent = '0';
+document.getElementById('current-1').textContent = '0';
+
+//Initially hide the dice image
+diceImgDOM.style.display = 'none';
+
+document.querySelector('.btn-roll').addEventListener('click', function() {
+    
+    var dice = Math.floor(Math.random() * 6) + 1;
+    var diceDOM = document.querySelector('#current-' + activePlayer);
+
+    //display the dice image and
+    //change the dice picture to show the rolled dice numbered image
+    diceImgDOM.style.display = 'block';
+    diceImgDOM.src = 'dice-' + dice + '.png';
 
 
-rollDiceBtn.addEventListener('click', function() {
+    if (dice !== 1) {
 
-   diceRolleValue = Math.floor(Math.random() * 6)
-   diceRolleValue++;
+        //Calculate the round score
+        roundScore += dice;
+        if ((roundScore + activePlayerGlobalScore()) >= 25) {
+            document.querySelector('.player-' + activePlayer + '-panel' ).classList.toggle('winner');
+        }
+        
+        //set the round score summed up number to the element
+        diceDOM.textContent = roundScore
+        
+    } else {
+        //hide the dice image
+        diceImgDOM.style.display = 'none';
+        //toggle active status of the current activePlayer
+        document.querySelector('.player-' + activePlayer + '-panel' ).classList.toggle('active');
+        roundScore = 0;
+        diceDOM.textContent = roundScore;
+        //change to new player
+        activePlayer === 0? activePlayer = 1 : activePlayer = 0;
+        document.querySelector('.player-' + activePlayer + '-panel' ).classList.toggle('active');
 
-   //change the current score of the activePlayer
-   currentPlayer = document.querySelector('#current-' + activePlayer);
-
-   currentScore = parseInt(document.querySelector('#current-' + activePlayer).textContent);
-   currentScore += diceRolleValue;
-
-   currentPlayer.textContent = currentScore;
-
-   //change the dice picture to mimic the rolled dice number
-   dicePic.src = 'dice-' + diceRolleValue + '.png';
-
-   //document.querySelector('#current-0').innerHTML = '<h1>' + (num + 1) + '</h1>';
-
-});
-
-holdBtn.addEventListener('click', function() {
-
-    if (activePlayer === 0) {
-        activePlayer = 1;
-    }else {
-        activePlayer = 0;
     }
 
+   
+
+});
+
+document.querySelector('.btn-hold').addEventListener('click', function() {
+
+    diceImgDOM.style.display = 'none';
+
+    var diceDOM = document.querySelector('#current-' + activePlayer);
+    diceDOM.textContent = '0';
+
+    document.querySelector('.player-' + activePlayer + '-panel' ).classList.toggle('active');
+
+    //get the round score of active player and sum to global score of active player
+    if (activePlayer === 0) {
+
+        player1GlobalScore += roundScore;
+        globalScore1DOM.textContent = player1GlobalScore;
+        activePlayer = 1;
+        
+
+    }else {
+
+        player2GlobalScore += roundScore;
+        globalScore2DOM.textContent = player2GlobalScore
+        activePlayer = 0;
+    }
+    
+
+    roundScore = 0;
+    document.querySelector('.player-' + activePlayer + '-panel' ).classList.toggle('active');
+
 
 
 });
+
+function activePlayerGlobalScore() {
+
+  return activePlayer === 0? player1GlobalScore : player2GlobalScore;
+
+}
 
 
 
