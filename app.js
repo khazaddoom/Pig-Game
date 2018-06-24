@@ -14,6 +14,7 @@ var player1GlobalScore = 0;
 var player2GlobalScore = 0;
 var activePlayer = 0;
 var roundScore = 0;
+var lastDice = 0;
 
 var globalScore1DOM = document.getElementById('score-0');
 var globalScore2DOM = document.getElementById('score-1');
@@ -31,6 +32,13 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
     
     var dice = Math.floor(Math.random() * 6) + 1;
     var diceDOM = document.querySelector('#current-' + activePlayer);
+    
+    if (dice === 6 && dice === lastDice) {
+        alert('2 6s in a row!');
+        roundLost(diceDOM);
+        lastDice = 0;
+        return;
+    }
 
     //display the dice image and
     //change the dice picture to show the rolled dice numbered image
@@ -39,7 +47,6 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
 
 
     if (dice !== 1) {
-
         //Calculate the round score
         roundScore += dice;
         if ((roundScore + activePlayerGlobalScore()) >= 25) {
@@ -47,26 +54,34 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
         }
         
         //set the round score summed up number to the element
-        diceDOM.textContent = roundScore
+        diceDOM.textContent = roundScore;
         
     } else {
-        //hide the dice image
-        diceImgDOM.style.display = 'none';
-        //toggle active status of the current activePlayer
-        document.querySelector('.player-' + activePlayer + '-panel' ).classList.toggle('active');
-        roundScore = 0;
-        diceDOM.textContent = roundScore;
-        //change to new player
-        activePlayer === 0? activePlayer = 1 : activePlayer = 0;
-        document.querySelector('.player-' + activePlayer + '-panel' ).classList.toggle('active');
-
+        roundLost(diceDOM);
     }
-
-   
+    //set the lastDice to the current rolled dice
+    lastDice = dice;
 
 });
 
+function roundLost(diceDOM) {
+
+    //hide the dice image
+    diceImgDOM.style.display = 'none';
+    //toggle active status of the current activePlayer
+    document.querySelector('.player-' + activePlayer + '-panel' ).classList.toggle('active');
+    roundScore = 0;
+    diceDOM.textContent = roundScore;
+    //change to new player
+    activePlayer === 0? activePlayer = 1 : activePlayer = 0;
+    document.querySelector('.player-' + activePlayer + '-panel' ).classList.toggle('active');
+
+}
+
 document.querySelector('.btn-hold').addEventListener('click', function() {
+
+    //last dice to 0 to avoid clashing an immediate 6 from another player
+    lastDice = 0;
 
     diceImgDOM.style.display = 'none';
 
